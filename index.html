@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>משימת יום הולדת לאבא</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: monospace;
+    background: black;
+    color: lime;
+    text-align: center;
+}
+
+#game, #survival {
+    display: none;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    background: black;
+    color: lime;
+    border: 1px solid lime;
+    cursor: pointer;
+}
+
+#stats {
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔓 מערכת פריצה סודית 🔓</h1>
+<p>הכנס קוד כדי להתחיל</p>
+
+<input type="password" id="codeInput">
+<button onclick="checkCode()">אישור</button>
+
+<p id="message"></p>
+
+<div id="game">
+    <h2>✅ גישה אושרה</h2>
+    <p>עובר למצב הישרדות...</p>
+</div>
+
+<div id="survival">
+    <h2>🌲 הישרדות בטבע</h2>
+
+    <div id="stats">
+        ❤️ חיים: <span id="health">100</span><br>
+        🍗 רעב: <span id="hunger">100</span><br>
+        🪵 עץ: <span id="wood">0</span><br>
+        🪨 אבן: <span id="stone">0</span>
+    </div>
+
+    <h3>פעולות</h3>
+    <button onclick="gatherWood()">אסוף עץ</button>
+    <button onclick="gatherStone()">אסוף אבן</button>
+    <button onclick="eat()">אכול</button>
+
+    <h3>בנייה</h3>
+    <button onclick="buildHouse()">בנה בית (50 עץ, 30 אבן)</button>
+
+    <h3>חנות ציוד</h3>
+    <button onclick="buyTool()">קנה כלי עבודה (20 עץ)</button>
+
+    <p id="survivalMsg"></p>
+</div>
+
+<script>
+const secretCode = "אבא40 2006!"; // תשנה למה שאתה רוצה
+
+let health = 100;
+let hunger = 100;
+let wood = 0;
+let stone = 0;
+let tool = false;
+
+function checkCode() {
+    const input = document.getElementById("codeInput").value;
+
+    if (input === secretCode) {
+        document.getElementById("message").innerText = "נכון!";
+        document.getElementById("game").style.display = "block";
+
+        setTimeout(() => {
+            document.getElementById("survival").style.display = "block";
+        }, 1500);
+    } else {
+        document.getElementById("message").innerText = "קוד שגוי...";
+    }
+}
+
+function updateStats() {
+    document.getElementById("health").innerText = health;
+    document.getElementById("hunger").innerText = hunger;
+    document.getElementById("wood").innerText = wood;
+    document.getElementById("stone").innerText = stone;
+}
+
+function gatherWood() {
+    let amount = tool ? 10 : 5;
+    wood += amount;
+    hunger -= 5;
+    updateStats();
+}
+
+function gatherStone() {
+    let amount = tool ? 8 : 4;
+    stone += amount;
+    hunger -= 5;
+    updateStats();
+}
+
+function eat() {
+    hunger += 20;
+    if (hunger > 100) hunger = 100;
+    updateStats();
+}
+
+function buildHouse() {
+    if (wood >= 50 && stone >= 30) {
+        wood -= 50;
+        stone -= 30;
+        document.getElementById("survivalMsg").innerText = "🏠 בנית בית! אתה מנצח!";
+    } else {
+        document.getElementById("survivalMsg").innerText = "אין מספיק משאבים";
+    }
+    updateStats();
+}
+
+function buyTool() {
+    if (wood >= 20) {
+        wood -= 20;
+        tool = true;
+        document.getElementById("survivalMsg").innerText = "🔧 קנית כלי עבודה!";
+    } else {
+        document.getElementById("survivalMsg").innerText = "אין מספיק עץ";
+    }
+    updateStats();
+}
+
+// ירידת רעב עם הזמן
+setInterval(() => {
+    hunger -= 2;
+    if (hunger <= 0) {
+        health -= 5;
+    }
+    if (health <= 0) {
+        alert("נפלת... נסה שוב!");
+        location.reload();
+    }
+    updateStats();
+}, 2000);
+
+</script>
+
+</body>
+</html>
